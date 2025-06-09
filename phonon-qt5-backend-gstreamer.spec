@@ -1,5 +1,5 @@
-%define		phonon_ver	4.7.0
-%define		qt_ver		5.0.0
+%define		phonon_ver	4.10.60
+%define		qt_ver		5.2.0
 
 Summary:	GStreamer backend for Qt5 Phonon
 Summary(pl.UTF-8):	Wtyczka GStreamera dla Phonona opartego na Qt5
@@ -15,12 +15,16 @@ BuildRequires:	Qt5Core-devel >= %{qt_ver}
 BuildRequires:	Qt5Gui-devel >= %{qt_ver}
 BuildRequires:	Qt5OpenGL-devel >= %{qt_ver}
 BuildRequires:	Qt5Widgets-devel >= %{qt_ver}
-BuildRequires:	cmake >= 2.8.6
+BuildRequires:	Qt5X11Extras-devel >= %{qt_ver}
+BuildRequires:	cmake >= 3.5
 BuildRequires:	glib2-devel >= 2.0
 BuildRequires:	gstreamer-devel >= 1.0
 BuildRequires:	gstreamer-plugins-base-devel >= 1.0
+BuildRequires:	kf5-extra-cmake-modules >= 5.60
 BuildRequires:	libxml2-devel >= 2
 BuildRequires:	pkgconfig
+BuildRequires:	qt5-build >= %{qt_ver}
+BuildRequires:	qt5-linguist >= %{qt_ver}
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRequires:	sed >= 4.0
 BuildRequires:	tar >= 1:1.22
@@ -28,6 +32,11 @@ BuildRequires:	xz
 BuildRequires:	phonon-qt5-devel >= %{phonon_ver}
 BuildRequires:	qt5-build >= %{qt_ver}
 BuildRequires:	qt5-qmake >= %{qt_ver}
+Requires:	Qt5Core >= %{qt_ver}
+Requires:	Qt5Gui >= %{qt_ver}
+Requires:	Qt5OpenGL >= %{qt_ver}
+Requires:	Qt5Widgets >= %{qt_ver}
+Requires:	Qt5X11Extras >= %{qt_ver}
 Requires:	phonon-qt5 >= %{phonon_ver}
 Suggests:	gstreamer-pulseaudio >= 1.0
 Provides:	phonon-qt5-backend = %{version}
@@ -42,18 +51,14 @@ Wtyczka GStreamera dla Phonona opartego na Qt5.
 %prep
 %setup -q -n phonon-backend-gstreamer-%{version}
 
-# Use PHONON_NO_GRAPHICSVIEW because videographicsobject.cpp is not ready for gstreamer 1.0;
-# as of 4.8.2, this setting is not exported as option, so hardcode it.
-#sed -i -e "15i set(PHONON_NO_GRAPHICSVIEW ON)" gstreamer/CMakeLists.txt
-
 %build
 install -d build-qt5
 cd build-qt5
 %cmake .. \
 	-DKDE_INSTALL_USE_QT_SYS_PATHS=ON \
 	-DPHONON_BUILD_PHONON4QT5=ON
+
 %{__make}
-cd ..
 
 %install
 rm -rf $RPM_BUILD_ROOT
